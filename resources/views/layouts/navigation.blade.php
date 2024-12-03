@@ -7,23 +7,20 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
 
-                    <x-nav-link :href="route('ktp.index')" :active="request()->routeIs('ktp.index')" class="ml-6">
-                        {{ __('Data KTP') }}
-                    </x-nav-link>
-
-                    <!-- Tambahan Tombol Export dengan Jarak Sedikit -->
-                    <x-nav-link :href="route('export')" :active="request()->routeIs('export')" class="ml-6">
-                        {{ __('Export') }}
-                    </x-nav-link>
+                  
 
                     @auth
                     @if (auth()->user()->role === 'admin')
-                    <x-nav-link :href="route('import')" :active="request()->routeIs('import')" class="ml-6">
-                        {{ __('Import') }}
+                    <x-nav-link :href="route('ruangans.index')" :active="request()->routeIs('ruangans.index')" class="ml-6">
+                        {{ __('Ruangan') }}
                     </x-nav-link>
 
-                    <x-nav-link :href="route('admin.activities')" :active="request()->routeIs('admin.activities')" class="ml-6">
-                        {{ __('User Activities') }}
+                    <x-nav-link :href="route('peminjaman.index')" :active="request()->routeIs('peminjaman.index')" class="ml-6">
+                        {{ __('Peminjaman') }}
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('fullcalender')" :active="request()->routeIs('fullcalender')" class="ml-6">
+                        {{ __('Pinjam Ruangan') }}
                     </x-nav-link>
                     @endif
                     @endauth
@@ -48,12 +45,15 @@
                     </x-slot>
 
                     <x-slot name="content">
+                        <x-dropdown-link :href="route('profile.edit')">
+                            {{ __('Profile') }}
+                        </x-dropdown-link>
+
                         <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
 
-                            <x-dropdown-link :href="route('logout')"
-                                onclick="event.preventDefault();
+                            <x-dropdown-link :href="route('logout')" onclick="event.preventDefault();
                                                 this.closest('form').submit();">
                                 {{ __('Log Out') }}
                             </x-dropdown-link>
