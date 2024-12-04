@@ -14,7 +14,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::middleware(['auth', 'log.activity'])->group(
+Route::middleware(['auth'])->group(
     function () {
         Route::get('/dashboard', function () {
             return view('dashboard');
@@ -27,20 +27,11 @@ Route::middleware(['auth', 'log.activity'])->group(
         Route::get('/export', function () {
             return view('ktp.export');
         })->name('export');
-
-        Route::get('ktp/{ktp}', [KTPWebController::class, 'show'])->name('ktp.show');
-
-        Route::get('export/pdf', [KTPWebController::class, 'exportPdf']);
-        Route::get('export/csv', [KTPWebController::class, 'exportCsv']);
     }
 );
 
 // Rute untuk user admin
 Route::middleware(['role:admin'])->group(function () {
-    Route::get('ktps/create', [KTPWebController::class, 'create'])->name('ktp.create');
-    Route::get('ktp/{ktp}/edit', [KTPWebController::class, 'edit'])->name('ktp.edit');
-    Route::put('ktp/{ktp}', [KTPWebController::class, 'update'])->name('ktp.update');
-    Route::delete('ktp/{ktp}', [KTPWebController::class, 'destroy'])->name('ktp.destroy');
     Route::get('/admin/activities', [AdminActivityController::class, 'index'])->name('admin.activities');
     Route::get('/admin/activities/export', [AdminActivityController::class, 'export'])->name('admin.activities.export');
     Route::get('/import', function () {
@@ -92,8 +83,6 @@ Route::get('/no-access/{role}', function ($role) {
 
 Route::resource('ruangan', RuanganController::class);
 Route::resource('peminjaman', PeminjamanController::class);
-
-
 
 
 
