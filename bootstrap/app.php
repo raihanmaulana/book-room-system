@@ -16,7 +16,6 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             'role' => RoleMiddleware::class,
-            'log.activity' => LogUserActivity::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
