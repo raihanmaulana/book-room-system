@@ -33,7 +33,10 @@
                                 Ruangan
                             </th>
                             <th class="px-6 py-3 bg-gray-50 dark:bg-gray-700 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                User
+                                PIC
+                            </th>
+                            <th class="px-6 py-3 bg-gray-50 dark:bg-gray-700 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                NIM
                             </th>
                             <th class="px-6 py-3 bg-gray-50 dark:bg-gray-700 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 Jam Mulai
@@ -56,6 +59,7 @@
                             <td class="px-6 py-4 text-gray-900 dark:text-white">{{ $peminjaman->tanggal_peminjaman }}</td>
                             <td class="px-6 py-4 text-gray-900 dark:text-white">{{ $peminjaman->ruangan->nama_ruangan }}</td>
                             <td class="px-6 py-4 text-gray-900 dark:text-white">{{ $peminjaman->user->name }}</td>
+                            <td class="px-6 py-4 text-gray-900 dark:text-white"></td>
                             <td class="px-6 py-4 text-gray-900 dark:text-white">{{ $peminjaman->jam_mulai }}</td>
                             <td class="px-6 py-4 text-gray-900 dark:text-white">{{ $peminjaman->jam_selesai }}</td>
                             <td class="px-6 py-4 text-gray-900 dark:text-white">{{ $peminjaman->status }}</td>
