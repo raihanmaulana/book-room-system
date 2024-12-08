@@ -3,14 +3,14 @@
         <div class="flex justify-between h-16">
             <div class="flex">
                 <div class="hidden sm:-my-px sm:ml-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
-
-                  
 
                     @auth
                     @if (auth()->user()->role === 'admin')
+                    <!-- Menu untuk admin -->
+                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="ml-6">
+                        {{ __('Dashboard') }}
+                    </x-nav-link>
+
                     <x-nav-link :href="route('ruangans.index')" :active="request()->routeIs('ruangans.index')" class="ml-6">
                         {{ __('Ruangan') }}
                     </x-nav-link>
@@ -22,10 +22,15 @@
                     <x-nav-link :href="route('fullcalender')" :active="request()->routeIs('fullcalender')" class="ml-6">
                         {{ __('Pinjam Ruangan') }}
                     </x-nav-link>
+                    @elseif (auth()->user()->role === 'user')
+                    <!-- Menu untuk user, hanya tampilkan Dashboard -->
+                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="ml-6">
+                        {{ __('Dashboard') }}
+                    </x-nav-link>
                     @endif
                     @endauth
-
                 </div>
+
 
             </div>
 
