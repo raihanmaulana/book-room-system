@@ -37,7 +37,10 @@
             initialView: 'timeGridWeek',
             slotMinTime: '07:00:00', // Set waktu awal pemilihan
             slotMaxTime: '22:00:00', // Set waktu akhir pemilihan
-            events: peminjaman.map(function(event) {
+            events: peminjaman.filter(function(event) {
+                // Hanya tampilkan event dengan status 'Disetujui KADEP'
+                return event.status === 'Disetujui KADEP';
+            }).map(function(event) {
                 return {
                     title: event.deskripsi_peminjaman,
                     start: event.tanggal_peminjaman + 'T' + event.jam_mulai,
@@ -47,7 +50,7 @@
                     penyelenggara: event.penyelenggara,
                     user_id: event.user_id,
                     status: event.status,
-                    color: event.status === 'Pending' ? 'blue' : 'green'
+                    color: 'green' // Warna hijau untuk Disetujui KADEP
                 };
             }),
 
@@ -116,39 +119,43 @@
                     if (result.isConfirmed) {
                         // Kirim data via AJAX ke server
                         fetch("{{ route('fullcalenderAjax') }}", {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                                },
-                                body: JSON.stringify({
-                                    deskripsi_peminjaman: result.value.deskripsi_peminjaman,
-                                    tanggal_peminjaman: result.value.tanggal_peminjaman,
-                                    penyelenggara: result.value.penyelenggara,
-                                    jam_mulai: result.value.jam_mulai,
-                                    jam_selesai: result.value.jam_selesai,
-                                    ruangan_id: result.value.ruangan_id,
-                                    user_id: result.value.user_id,
-                                    status: 'Pending',
-                                    type: 'add'
-                                })
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            body: JSON.stringify({
+                                deskripsi_peminjaman: result.value.deskripsi_peminjaman,
+                                tanggal_peminjaman: result.value.tanggal_peminjaman,
+                                penyelenggara: result.value.penyelenggara,
+                                jam_mulai: result.value.jam_mulai,
+                                jam_selesai: result.value.jam_selesai,
+                                ruangan_id: result.value.ruangan_id,
+                                user_id: result.value.user_id,
+                                status: 'Pending',  // Statusnya tetap Pending saat ditambahkan
+                                type: 'add'
                             })
-                            .then(response => response.json())
-                            .then(data => {
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            // Hanya menambahkan event jika statusnya Disetujui KADEP
+                            if (data.status === 'Disetujui KADEP') {
                                 calendar.addEvent({
                                     id: data.id,
                                     title: data.deskripsi_peminjaman,
                                     start: data.tanggal_peminjaman + 'T' + data.jam_mulai,
                                     end: data.tanggal_peminjaman + 'T' + data.jam_selesai,
-                                    color: 'blue', // Menggunakan warna sesuai status
+                                    color: 'green', // Warna hijau untuk Disetujui KADEP
                                 });
                                 toastr.success("Event Created Successfully");
-                            })
-                            .catch(error => {
-                                console.error('Error:', error);
-                            });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
                     }
                 });
+
             },
 
             eventClick: function(info) {

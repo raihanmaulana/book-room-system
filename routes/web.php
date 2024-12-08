@@ -20,13 +20,10 @@ Route::middleware(['auth'])->group(
             return view('dashboard');
         })->name('dashboard');
 
-        Route::get('/ktp', function () {
-            return view('ktp.index');
-        })->name('ktp.index');
-
-        Route::get('/export', function () {
-            return view('ktp.export');
-        })->name('export');
+        Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+        Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+        Route::get('/export-pdf', [PeminjamanController::class, 'exportPDF'])->name('export.pdf');
     }
 );
 
@@ -39,20 +36,10 @@ Route::middleware(['role:admin,DPM,KADEP'])->group(function () {
     })->name('import');
 
     Route::get('ruangans', [RuanganController::class, 'index'])->name('ruangans.index');
-
-    // Menampilkan form untuk menambah ruangan
     Route::get('ruangans/create', [RuanganController::class, 'create'])->name('ruangans.create');
-
-    // Menyimpan ruangan baru
     Route::post('ruangans', [RuanganController::class, 'store'])->name('ruangans.store');
-
-    // Menampilkan form untuk mengedit ruangan
     Route::get('ruangans/{ruangan}/edit', [RuanganController::class, 'edit'])->name('ruangans.edit');
-
-    // Mengupdate ruangan
     Route::put('ruangans/{ruangan}', [RuanganController::class, 'update'])->name('ruangans.update');
-
-    // Menghapus ruangan
     Route::delete('ruangans/{ruangan}', [RuanganController::class, 'destroy'])->name('ruangans.destroy');
 
     Route::get('peminjaman', [PeminjamanController::class, 'viewTable'])->name('peminjaman.viewTable');
@@ -62,32 +49,27 @@ Route::middleware(['role:admin,DPM,KADEP'])->group(function () {
     Route::put('peminjaman/{id}', [PeminjamanController::class, 'update'])->name('peminjaman.update');
     Route::delete('peminjaman/{id}', [PeminjamanController::class, 'destroy'])->name('peminjaman.destroy');
     Route::patch('/peminjaman/{id}/update-status', [PeminjamanController::class, 'updateStatus'])->name('peminjaman.updateStatus');
-
+    Route::resource('peminjaman', PeminjamanController::class);
 });
 
 // Route::resource('ktp', KTPWebController::class);
 
-Route::middleware(['role:admin'])->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    
-
+Route::middleware(['role:user'])->group(function () {
+    // Rute untuk melihat riwayat peminjaman pengguna
+    Route::get('/riwayat-peminjaman', [PeminjamanController::class, 'riwayatPeminjaman'])->name('riwayat.peminjaman');
+    Route::get('/peminjaman/{id}/export-pdf', [PeminjamanController::class, 'exportPdf'])->name('peminjaman.exportPdf');
 });
 
-Route::get('fullcalender', [PeminjamanController::class, 'ViewPeminjaman'])->name('fullcalender');
-    Route::post('fullcalenderAjax', [PeminjamanController::class, 'ajax'])->name('fullcalenderAjax');
+Route::get('pinjam-ruangan', [PeminjamanController::class, 'ViewPeminjaman'])->name('pinjam.ruangan');
+Route::post('fullcalenderAjax', [PeminjamanController::class, 'ajax'])->name('fullcalenderAjax');
+
+
+
+
+
+
 Route::get('/no-access/{role}', function ($role) {
     return view('no-access', ['role' => $role]);
 })->name('no.access');
-
-
-Route::resource('ruangan', RuanganController::class);
-Route::resource('peminjaman', PeminjamanController::class);
-
-Route::get('/export-pdf', [PeminjamanController::class, 'exportPDF'])->name('export.pdf');
-
-
-
 
 require __DIR__ . '/auth.php';

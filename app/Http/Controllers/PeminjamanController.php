@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ruangan;
-use Barryvdh\DomPDF\Facade as PDF;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use App\Models\Peminjaman;
 use Illuminate\Http\Request;
 
@@ -12,9 +12,10 @@ class PeminjamanController extends Controller
     public function viewPeminjaman(Request $request)
     {
         if ($request->ajax()) {
-            // Mendapatkan data peminjaman dalam rentang tanggal yang diberikan
+            // Mendapatkan data peminjaman dalam rentang tanggal yang diberikan dan hanya yang statusnya 'Disetujui KADEP'
             $data = Peminjaman::whereDate('tanggal_peminjaman', '>=', $request->start)
                 ->whereDate('tanggal_peminjaman', '<=', $request->end)
+                ->where('status', 'Disetujui KADEP') // Hanya ambil peminjaman yang disetujui KADEP
                 ->get(['id', 'deskripsi_peminjaman', 'tanggal_peminjaman', 'jam_mulai', 'jam_selesai', 'ruangan_id', 'user_id', 'status']);
 
             // Gabungkan data peminjaman dengan nama ruangan menggunakan relasi
@@ -26,8 +27,8 @@ class PeminjamanController extends Controller
             return response()->json($data);
         }
 
-        // Mengambil data peminjaman dan mengubahnya menjadi array
-        $peminjaman = Peminjaman::all();
+        // Mengambil data peminjaman yang sudah disetujui KADEP untuk tampil di halaman awal
+        $peminjaman = Peminjaman::where('status', 'Disetujui KADEP')->get(); // Ambil hanya yang disetujui KADEP
 
         // Mengambil data ruangan untuk dropdown
         $ruangans = Ruangan::all();
@@ -35,8 +36,6 @@ class PeminjamanController extends Controller
         // Mengirim data peminjaman dan ruangans ke view
         return view('calendar.index', compact('peminjaman', 'ruangans'));
     }
-
-
 
     public function ajax(Request $request)
     {
@@ -217,19 +216,31 @@ class PeminjamanController extends Controller
     }
 
 
-    public function exportPDF()
+    public function exportPdf($id)
     {
-        // Data untuk template
-        $data = [
-            'penyelenggara' => 'BEM FT Undip', // Ambil dari peminjaman->penyelenggara
-            'deskripsi' => 'Roadshow BEM FT Undip', // Dari deskripsi_peminjaman
-            'tanggal' => '15 Desember 2024', // Dari tanggal_peminjaman
-            'waktu' => '08.00-10.00', // Dari jam_mulai dan jam_selesai
-        ];
+        // Ambil data peminjaman berdasarkan ID
+        $peminjaman = Peminjaman::with('ruangan')->findOrFail($id);
 
-        // Generate PDF
-        $pdf = PDF::loadView('pdf.template', $data);
+        // Data yang akan dikirimkan ke view
+        $penyelenggara = $peminjaman->user->name;  // Nama penyelenggara
+        $tanggal = $peminjaman->tanggal_peminjaman; // Tanggal peminjaman
+        $waktu = $peminjaman->jam_mulai . ' - ' . $peminjaman->jam_selesai; // Waktu peminjaman
+        $deskripsi = $peminjaman->deskripsi_peminjaman; // Deskripsi peminjaman
+        $ruangan = $peminjaman->ruangan->nama_ruangan; // Nama ruangan (dari relasi)
 
-        return $pdf->stream('surat_peminjaman.pdf'); // Tampilkan PDF
+        // Menggunakan DomPDF untuk membuat PDF
+        $pdf = PDF::loadView('pdf.surat-persetujuan', compact('penyelenggara', 'tanggal', 'waktu', 'deskripsi', 'ruangan'));
+
+        // Mengirimkan PDF ke browser
+        return $pdf->download('surat-persetujuan.pdf');
+    }
+
+    public function riwayatPeminjaman()
+    {
+        // Ambil data peminjaman berdasarkan user yang login dan menggunakan pagination
+        $peminjamans = Peminjaman::where('user_id', auth()->id())
+            ->paginate(10); // Mengambil 10 data per halaman
+
+        return view('peminjaman.riwayat-peminjaman', compact('peminjamans'));
     }
 }

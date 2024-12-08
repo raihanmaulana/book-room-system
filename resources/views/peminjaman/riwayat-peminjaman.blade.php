@@ -104,70 +104,25 @@
                             <td class="px-6 py-4 text-gray-900 dark:text-white">{{ $peminjaman->jam_selesai }}</td>
                             <td class="px-6 py-4 text-gray-900 dark:text-white">{{ $peminjaman->status }}</td>
                             <td class="px-6 py-4 text-gray-900 dark:text-white">
-                                @if(auth()->user()->role == 'admin')
-                                @if($peminjaman->status == 'Pending')
-                                <!-- Admin: Status Pending, dapat setujui atau tolak -->
-                                <form action="{{ route('peminjaman.updateStatus', $peminjaman->id) }}" method="POST" style="display:inline;">
-                                    @csrf
-                                    @method('PATCH')
-                                    <button type="submit" name="status" value="Disetujui Admin" class="btn btn-success bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md">Setujui</button>
-                                </form>
-                                <form action="{{ route('peminjaman.updateStatus', $peminjaman->id) }}" method="POST" style="display:inline;">
-                                    @csrf
-                                    @method('PATCH')
-                                    <button type="submit" name="status" value="Ditolak" class="btn btn-danger bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md">Tolak</button>
-                                </form>
+                                @if ($peminjaman->status == 'Disetujui KADEP')
+                                <!-- Tombol Export PDF -->
+                                <a href="{{ route('peminjaman.exportPdf', $peminjaman->id) }}" class="btn btn-success bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md">
+                                    Export PDF
+                                </a>
                                 @else
-                                <!-- Admin: Status sudah berubah, hanya tampilkan keterangan -->
-                                <button class="btn {{ $peminjaman->status == 'Disetujui Admin' ? 'btn-success' : 'btn-danger' }} border text-white px-4 py-2 rounded-md cursor-not-allowed" disabled>
-                                    {{ $peminjaman->status == 'Disetujui Admin' ? 'Disetujui Admin' : ($peminjaman->status == 'Ditolak' ? 'Ditolak' : 'Tidak Memenuhi Syarat') }}
-                                </button>
-                                @endif
-                                @elseif(auth()->user()->role == 'DPM')
-                                @if($peminjaman->status == 'Disetujui Admin')
-                                <!-- DPM: Status Disetujui Admin, dapat setujui atau tolak -->
-                                <form action="{{ route('peminjaman.updateStatus', $peminjaman->id) }}" method="POST" style="display:inline;">
-                                    @csrf
-                                    @method('PATCH')
-                                    <button type="submit" name="status" value="Disetujui DPM" class="btn btn-success bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md">Setujui</button>
-                                </form>
-                                <form action="{{ route('peminjaman.updateStatus', $peminjaman->id) }}" method="POST" style="display:inline;">
-                                    @csrf
-                                    @method('PATCH')
-                                    <button type="submit" name="status" value="Ditolak" class="btn btn-danger bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md">Tolak</button>
-                                </form>
+                                <!-- Status lainnya (misalnya Pending atau Ditolak) -->
+                                @if ($peminjaman->status == 'Ditolak')
+                                <span class="bg-red-600 text-white px-4 py-2 rounded">Ditolak</span>
                                 @else
-                                <!-- DPM: Status sudah berubah, hanya tampilkan keterangan -->
-                                <button class="btn {{ $peminjaman->status == 'Disetujui DPM' ? 'btn-success' : 'btn-danger' }} border text-white px-4 py-2 rounded-md cursor-not-allowed" disabled>
-                                    {{ $peminjaman->status == 'Disetujui DPM' ? 'Disetujui DPM' : ($peminjaman->status == 'Ditolak' ? 'Ditolak' : 'Tidak Memenuhi Syarat') }}
-                                </button>
-                                @endif
-                                @elseif(auth()->user()->role == 'KADEP')
-                                @if($peminjaman->status == 'Disetujui DPM')
-                                <!-- KADEP: Status Disetujui DPM, dapat setujui atau tolak -->
-                                <form action="{{ route('peminjaman.updateStatus', $peminjaman->id) }}" method="POST" style="display:inline;">
-                                    @csrf
-                                    @method('PATCH')
-                                    <button type="submit" name="status" value="Disetujui KADEP" class="btn btn-success bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md">Setujui</button>
-                                </form>
-                                <form action="{{ route('peminjaman.updateStatus', $peminjaman->id) }}" method="POST" style="display:inline;">
-                                    @csrf
-                                    @method('PATCH')
-                                    <button type="submit" name="status" value="Ditolak" class="btn btn-danger bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md">Tolak</button>
-                                </form>
-                                @else
-                                <!-- KADEP: Status sudah berubah, hanya tampilkan keterangan -->
-                                <button class="btn {{ $peminjaman->status == 'Disetujui KADEP' ? 'btn-success' : 'btn-danger' }} border text-white px-4 py-2 rounded-md cursor-not-allowed" disabled>
-                                    {{ $peminjaman->status == 'Disetujui KADEP' ? 'Disetujui KADEP' : ($peminjaman->status == 'Ditolak' ? 'Ditolak' : 'Tidak Memenuhi Syarat') }}
-                                </button>
+                                <span class="bg-yellow-600 text-white px-4 py-2 rounded">Pending</span>
                                 @endif
                                 @endif
                             </td>
+
                         </tr>
                         @endforeach
                     </tbody>
                 </table>
-
                 <div class="mt-4">
                     {{ $peminjamans->links('vendor.pagination.tailwind') }}
                 </div>

@@ -19,7 +19,7 @@
                         {{ __('Peminjaman') }}
                     </x-nav-link>
 
-                    <x-nav-link :href="route('fullcalender')" :active="request()->routeIs('fullcalender')" class="ml-6">
+                    <x-nav-link :href="route('pinjam.ruangan')" :active="request()->routeIs('pinjam.ruangan')" class="ml-6">
                         {{ __('Pinjam Ruangan') }}
                     </x-nav-link>
                     @elseif (auth()->user()->role === 'user')
@@ -28,7 +28,7 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
 
-                    <x-nav-link :href="route('fullcalender')" :active="request()->routeIs('fullcalender')" class="ml-6">
+                    <x-nav-link :href="route('pinjam.ruangan')" :active="request()->routeIs('pinjam.ruangan')" class="ml-6">
                         {{ __('Pinjam Ruangan') }}
                     </x-nav-link>
                     @elseif (auth()->user()->role === 'DPM')
