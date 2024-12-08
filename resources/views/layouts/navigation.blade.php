@@ -7,7 +7,9 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
 
-                  
+                    <x-nav-link :href="route('fullcalender')" :active="request()->routeIs('fullcalender')">
+                        {{ __('peminjaman') }}
+                    </x-nav-link>
 
                     @auth
                     @if (auth()->user()->role === 'admin')
