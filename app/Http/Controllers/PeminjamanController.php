@@ -3,37 +3,38 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ruangan;
+use Barryvdh\DomPDF\Facade as PDF;
 use App\Models\Peminjaman;
 use Illuminate\Http\Request;
 
 class PeminjamanController extends Controller
 {
     public function viewPeminjaman(Request $request)
-{
-    if ($request->ajax()) {
-        // Mendapatkan data peminjaman dalam rentang tanggal yang diberikan
-        $data = Peminjaman::whereDate('tanggal_peminjaman', '>=', $request->start)
-            ->whereDate('tanggal_peminjaman', '<=', $request->end)
-            ->get(['id', 'deskripsi_peminjaman', 'tanggal_peminjaman', 'jam_mulai', 'jam_selesai', 'ruangan_id', 'user_id', 'status']);
-        
-        // Gabungkan data peminjaman dengan nama ruangan menggunakan relasi
-        $data = $data->map(function($peminjaman) {
-            $peminjaman->nama_ruangan = $peminjaman->ruangan->nama_ruangan; // Ambil nama ruangan
-            return $peminjaman;
-        });
-        
-        return response()->json($data);
+    {
+        if ($request->ajax()) {
+            // Mendapatkan data peminjaman dalam rentang tanggal yang diberikan
+            $data = Peminjaman::whereDate('tanggal_peminjaman', '>=', $request->start)
+                ->whereDate('tanggal_peminjaman', '<=', $request->end)
+                ->get(['id', 'deskripsi_peminjaman', 'tanggal_peminjaman', 'jam_mulai', 'jam_selesai', 'ruangan_id', 'user_id', 'status']);
+
+            // Gabungkan data peminjaman dengan nama ruangan menggunakan relasi
+            $data = $data->map(function ($peminjaman) {
+                $peminjaman->nama_ruangan = $peminjaman->ruangan->nama_ruangan; // Ambil nama ruangan
+                return $peminjaman;
+            });
+
+            return response()->json($data);
+        }
+
+        // Mengambil data peminjaman dan mengubahnya menjadi array
+        $peminjaman = Peminjaman::all();
+
+        // Mengambil data ruangan untuk dropdown
+        $ruangans = Ruangan::all();
+
+        // Mengirim data peminjaman dan ruangans ke view
+        return view('calendar.index', compact('peminjaman', 'ruangans'));
     }
-
-    // Mengambil data peminjaman dan mengubahnya menjadi array
-    $peminjaman = Peminjaman::all();
-
-    // Mengambil data ruangan untuk dropdown
-    $ruangans = Ruangan::all();
-
-    // Mengirim data peminjaman dan ruangans ke view
-    return view('calendar.index', compact('peminjaman', 'ruangans'));
-}
 
 
 
@@ -45,6 +46,7 @@ class PeminjamanController extends Controller
                 $peminjaman = Peminjaman::create([
                     'deskripsi_peminjaman' => $request->deskripsi_peminjaman,
                     'tanggal_peminjaman' => $request->tanggal_peminjaman,
+                    'penyelenggara' => $request->penyelenggara,
                     'jam_mulai' => $request->jam_mulai,
                     'jam_selesai' => $request->jam_selesai,
                     'ruangan_id' => $request->ruangan_id,
@@ -165,24 +167,69 @@ class PeminjamanController extends Controller
 
     public function updateStatus(Request $request, $id)
     {
-        // Verifikasi apakah user adalah admin
-        if (auth()->user()->role !== 'admin') {
-            return redirect()->route('peminjaman.index')->with('error', 'Unauthorized action');
-        }
-
         // Validasi status yang diterima
         $request->validate([
-            'status' => 'required|in:Disetujui,Ditolak',
+            'status' => 'required|in:Disetujui Admin,Disetujui DPM,Disetujui KADEP,Ditolak',
         ]);
 
         // Cari peminjaman berdasarkan ID
         $peminjaman = Peminjaman::findOrFail($id);
 
-        // Update status peminjaman
+        // Cek status saat ini untuk menentukan apakah perubahan status valid
+        switch ($peminjaman->status) {
+            case 'Pending':
+                if (auth()->user()->role !== 'admin') {
+                    return redirect()->route('peminjaman.index')->with('error', 'Unauthorized action');
+                }
+                if ($request->status !== 'Disetujui Admin' && $request->status !== 'Ditolak') {
+                    return redirect()->route('peminjaman.index')->with('error', 'Invalid status transition');
+                }
+                break;
+
+            case 'Disetujui Admin':
+                if (auth()->user()->role !== 'DPM') {
+                    return redirect()->route('peminjaman.index')->with('error', 'Unauthorized action');
+                }
+                if ($request->status !== 'Disetujui DPM' && $request->status !== 'Ditolak') {
+                    return redirect()->route('peminjaman.index')->with('error', 'Invalid status transition');
+                }
+                break;
+
+            case 'Disetujui DPM':
+                if (auth()->user()->role !== 'KADEP') {
+                    return redirect()->route('peminjaman.index')->with('error', 'Unauthorized action');
+                }
+                if ($request->status !== 'Disetujui KADEP' && $request->status !== 'Ditolak') {
+                    return redirect()->route('peminjaman.index')->with('error', 'Invalid status transition');
+                }
+                break;
+
+            default:
+                return redirect()->route('peminjaman.index')->with('error', 'Invalid status transition');
+        }
+
+        // Perbarui status peminjaman
         $peminjaman->status = $request->status;
         $peminjaman->save();
 
-        // Redirect kembali dengan pesan sukses
+        // Redirect dengan pesan sukses
         return redirect()->route('peminjaman.index')->with('success', 'Status peminjaman berhasil diperbarui');
+    }
+
+
+    public function exportPDF()
+    {
+        // Data untuk template
+        $data = [
+            'penyelenggara' => 'BEM FT Undip', // Ambil dari peminjaman->penyelenggara
+            'deskripsi' => 'Roadshow BEM FT Undip', // Dari deskripsi_peminjaman
+            'tanggal' => '15 Desember 2024', // Dari tanggal_peminjaman
+            'waktu' => '08.00-10.00', // Dari jam_mulai dan jam_selesai
+        ];
+
+        // Generate PDF
+        $pdf = PDF::loadView('pdf.template', $data);
+
+        return $pdf->stream('surat_peminjaman.pdf'); // Tampilkan PDF
     }
 }

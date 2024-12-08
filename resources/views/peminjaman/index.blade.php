@@ -64,12 +64,36 @@
                             <td class="px-6 py-4 text-gray-900 dark:text-white">{{ $peminjaman->jam_selesai }}</td>
                             <td class="px-6 py-4 text-gray-900 dark:text-white">{{ $peminjaman->status }}</td>
                             <td class="px-6 py-4 text-gray-900 dark:text-white">
-                                
-                                @if(auth()->user()->role == 'admin' && $peminjaman->status == 'Pending')
+                                @if(auth()->user()->role == 'admin' && $peminjaman->status == 'pending')
+                                <!-- Admin: Status Pending -->
                                 <form action="{{ route('peminjaman.updateStatus', $peminjaman->id) }}" method="POST" style="display:inline;">
                                     @csrf
                                     @method('PATCH')
-                                    <button type="submit" name="status" value="Disetujui" class="btn btn-success bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md">Setujui</button>
+                                    <button type="submit" name="status" value="Disetujui Admin" class="btn btn-success bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md">Setujui</button>
+                                </form>
+                                <form action="{{ route('peminjaman.updateStatus', $peminjaman->id) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit" name="status" value="Ditolak" class="btn btn-danger bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md">Tolak</button>
+                                </form>
+                                @elseif(auth()->user()->role == 'DPM' && $peminjaman->status == 'Disetujui Admin')
+                                <!-- DPM: Status Disetujui Admin -->
+                                <form action="{{ route('peminjaman.updateStatus', $peminjaman->id) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit" name="status" value="Disetujui DPM" class="btn btn-success bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md">Setujui</button>
+                                </form>
+                                <form action="{{ route('peminjaman.updateStatus', $peminjaman->id) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit" name="status" value="Ditolak" class="btn btn-danger bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md">Tolak</button>
+                                </form>
+                                @elseif(auth()->user()->role == 'KADEP' && $peminjaman->status == 'Disetujui DPM')
+                                <!-- KADEP: Status Disetujui DPM -->
+                                <form action="{{ route('peminjaman.updateStatus', $peminjaman->id) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit" name="status" value="Disetujui KADEP" class="btn btn-success bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md">Setujui</button>
                                 </form>
                                 <form action="{{ route('peminjaman.updateStatus', $peminjaman->id) }}" method="POST" style="display:inline;">
                                     @csrf

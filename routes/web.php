@@ -31,7 +31,7 @@ Route::middleware(['auth'])->group(
 );
 
 // Rute untuk user admin
-Route::middleware(['role:admin'])->group(function () {
+Route::middleware(['role:admin,DPM,KADEP'])->group(function () {
     Route::get('/admin/activities', [AdminActivityController::class, 'index'])->name('admin.activities');
     Route::get('/admin/activities/export', [AdminActivityController::class, 'export'])->name('admin.activities.export');
     Route::get('/import', function () {
@@ -85,6 +85,7 @@ Route::get('/no-access/{role}', function ($role) {
 Route::resource('ruangan', RuanganController::class);
 Route::resource('peminjaman', PeminjamanController::class);
 
+Route::get('/export-pdf', [PeminjamanController::class, 'exportPDF'])->name('export.pdf');
 
 
 

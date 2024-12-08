@@ -27,6 +27,24 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="ml-6">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+
+                    <x-nav-link :href="route('fullcalender')" :active="request()->routeIs('fullcalender')" class="ml-6">
+                        {{ __('Pinjam Ruangan') }}
+                    </x-nav-link>
+                    @elseif (auth()->user()->role === 'DPM')
+                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="ml-6">
+                        {{ __('Dashboard') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('peminjaman.index')" :active="request()->routeIs('peminjaman.index')" class="ml-6">
+                        {{ __('Peminjaman') }}
+                    </x-nav-link>
+                    @elseif (auth()->user()->role === 'KADEP')
+                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="ml-6">
+                        {{ __('Dashboard') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('peminjaman.index')" :active="request()->routeIs('peminjaman.index')" class="ml-6">
+                        {{ __('Peminjaman') }}
+                    </x-nav-link>
                     @endif
                     @endauth
                 </div>
