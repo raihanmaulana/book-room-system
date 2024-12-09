@@ -98,7 +98,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 
     <script>
@@ -258,7 +257,7 @@
         .form-structor {
             background-color: #222;
             border-radius: 15px;
-            height: 550px;
+            height: 600px;
             width: 350px;
             position: relative;
             overflow: hidden;
@@ -279,7 +278,7 @@
 
             .signup {
                 position: absolute;
-                top: 50%;
+                top: 44%;
                 left: 50%;
                 -webkit-transform: translate(-50%, -50%);
                 width: 65%;
