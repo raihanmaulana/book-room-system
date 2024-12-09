@@ -119,41 +119,59 @@
                     if (result.isConfirmed) {
                         // Kirim data via AJAX ke server
                         fetch("{{ route('fullcalenderAjax') }}", {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                            },
-                            body: JSON.stringify({
-                                deskripsi_peminjaman: result.value.deskripsi_peminjaman,
-                                tanggal_peminjaman: result.value.tanggal_peminjaman,
-                                penyelenggara: result.value.penyelenggara,
-                                jam_mulai: result.value.jam_mulai,
-                                jam_selesai: result.value.jam_selesai,
-                                ruangan_id: result.value.ruangan_id,
-                                user_id: result.value.user_id,
-                                status: 'Pending',  // Statusnya tetap Pending saat ditambahkan
-                                type: 'add'
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                },
+                                body: JSON.stringify({
+                                    deskripsi_peminjaman: result.value.deskripsi_peminjaman,
+                                    tanggal_peminjaman: result.value.tanggal_peminjaman,
+                                    penyelenggara: result.value.penyelenggara,
+                                    jam_mulai: result.value.jam_mulai,
+                                    jam_selesai: result.value.jam_selesai,
+                                    ruangan_id: result.value.ruangan_id,
+                                    user_id: result.value.user_id,
+                                    status: 'Pending', // Statusnya tetap Pending saat ditambahkan
+                                    type: 'add'
+                                })
                             })
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            // Hanya menambahkan event jika statusnya Disetujui KADEP
-                            if (data.status === 'Disetujui KADEP') {
-                                calendar.addEvent({
-                                    id: data.id,
-                                    title: data.deskripsi_peminjaman,
-                                    start: data.tanggal_peminjaman + 'T' + data.jam_mulai,
-                                    end: data.tanggal_peminjaman + 'T' + data.jam_selesai,
-                                    color: 'green', // Warna hijau untuk Disetujui KADEP
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.status === 'Pending') {
+                                    // Menampilkan popup sukses menggunakan SweetAlert2
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Pengajuan Pinjaman Berhasil',
+                                        text: 'Pengajuan Anda telah berhasil diajukan dan sedang menunggu persetujuan',
+                                        showConfirmButton: true, // Menampilkan tombol konfirmasi
+                                        confirmButtonText: 'Oke', // Teks tombol konfirmasi
+                                        timer: 4000, // Popup otomatis menutup setelah 4 detik, jika tidak diklik
+                                    });
+
+                                } else if (data.status === 'Disetujui KADEP') {
+                                    // Menambahkan event ke kalender jika statusnya Disetujui KADEP
+                                    calendar.addEvent({
+                                        id: data.id,
+                                        title: data.deskripsi_peminjaman,
+                                        start: data.tanggal_peminjaman + 'T' + data.jam_mulai,
+                                        end: data.tanggal_peminjaman + 'T' + data.jam_selesai,
+                                        color: 'green', // Warna hijau untuk Disetujui KADEP
+                                    });
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                // Menampilkan error jika terjadi kesalahan
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Terjadi Kesalahan',
+                                    text: 'Terjadi masalah saat menyimpan event. Silakan coba lagi.',
+                                    showConfirmButton: true
                                 });
-                                toastr.success("Event Created Successfully");
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                        });
+                            });
                     }
+
                 });
 
             },
