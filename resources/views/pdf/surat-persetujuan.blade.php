@@ -16,9 +16,9 @@
 </head>
 <body>
     <div class="kop-surat">
-    <h3>DEPARTEMEN TEKNIK INDUSTRI</h3>
-    <h3>UNIVERSITAS DIPONEGORO</h3>
-    <p>Jl. Prof. Jacub Rais, Tembalang, Semarang, Jawa Tengah</p>
+    <h2 style="margin: 0px;">DEPARTEMEN TEKNIK INDUSTRI</h2>
+    <h2 style="margin: 0px;">UNIVERSITAS DIPONEGORO</h2>
+    <p style="font-size: 10px; margin:5px;">Jl. Prof. Jacub Rais, Tembalang, Semarang, Jawa Tengah <br> Telp. (024) 7460052 | Email industri@ft.undip.ac.id</p>
     </div>
     <hr>
     <p>Semarang, {{ \Carbon\Carbon::now()->format('d F Y') }}</p>
