@@ -222,7 +222,7 @@ class PeminjamanController extends Controller
         $peminjaman = Peminjaman::with('ruangan')->findOrFail($id);
 
         // Data yang akan dikirimkan ke view
-        $penyelenggara = $peminjaman->user->name;  // Nama penyelenggara
+        $penyelenggara = $peminjaman->penyelenggara;  // Nama penyelenggara
         $tanggal = $peminjaman->tanggal_peminjaman; // Tanggal peminjaman
         $waktu = $peminjaman->jam_mulai . ' - ' . $peminjaman->jam_selesai; // Waktu peminjaman
         $deskripsi = $peminjaman->deskripsi_peminjaman; // Deskripsi peminjaman

@@ -33,7 +33,7 @@
     <p>Berdasarkan permohonan yang diajukan pada tanggal {{ $tanggal }}, dengan ini kami menyampaikan bahwa permohonan tersebut telah disetujui.</p>
     <p>Detail peminjaman adalah sebagai berikut:</p>
     <ul>
-        <li>Ruangan: 202</li>
+        <li>Ruangan: {{ $ruangan }}</li>
         <li>Tanggal: {{ $tanggal }}</li>
         <li>Waktu: {{ $waktu }}</li>
         <li>Keperluan: {{ $deskripsi }}</li>

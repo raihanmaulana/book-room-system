@@ -31,6 +31,11 @@
                     <x-nav-link :href="route('pinjam.ruangan')" :active="request()->routeIs('pinjam.ruangan')" class="ml-6">
                         {{ __('Pinjam Ruangan') }}
                     </x-nav-link>
+                    
+                    <x-nav-link :href="route('riwayat.peminjaman')" :active="request()->routeIs('riwayat.peminjaman')" class="ml-6">
+                        {{ __('Riwayat Peminjaman') }}
+                    </x-nav-link>
+
                     @elseif (auth()->user()->role === 'DPM')
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="ml-6">
                         {{ __('Dashboard') }}

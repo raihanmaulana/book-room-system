@@ -106,8 +106,11 @@
                             <td class="px-6 py-4 text-gray-900 dark:text-white">
                                 @if ($peminjaman->status == 'Disetujui KADEP')
                                 <!-- Tombol Export PDF -->
-                                <a href="{{ route('peminjaman.exportPdf', $peminjaman->id) }}" class="btn btn-success bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md">
-                                    Export PDF
+                                <a href="{{ route('peminjaman.exportPdf', $peminjaman->id) }}" class="btn btn-success bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md font-medium inline-flex items-center justify-center space-x-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                        <path fill-rule="evenodd" d="M5 3a2 2 0 012-2h6a2 2 0 012 2v14a2 2 0 01-2 2H7a2 2 0 01-2-2V3zm2 0h6v14H7V3z" clip-rule="evenodd" />
+                                    </svg>
+                                    <span>Export PDF</span>
                                 </a>
                                 @else
                                 <!-- Status lainnya (misalnya Pending atau Ditolak) -->
@@ -118,7 +121,6 @@
                                 @endif
                                 @endif
                             </td>
-
                         </tr>
                         @endforeach
                     </tbody>
