@@ -2,12 +2,24 @@
 <html>
 <head>
     <title>Surat Persetujuan</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .kop-surat {
+            text-align: center;
+        }
+
+       
+    </style>
 </head>
 <body>
-    <p>Jl. Prof. Jacub Rais, Tembalang</p>
-    <p>Semarang, Indonesia</p>
-    <p>Telp. (024) 7460052</p>
-    <p>Email industri@ft.undip.ac.id</p>
+    <div class="kop-surat">
+    <h3>DEPARTEMEN TEKNIK INDUSTRI</h3>
+    <h3>UNIVERSITAS DIPONEGORO</h3>
+    <p>Jl. Prof. Jacub Rais, Tembalang, Semarang, Jawa Tengah</p>
+    </div>
     <hr>
     <p>Semarang, {{ \Carbon\Carbon::now()->format('d F Y') }}</p>
     <p>Nomor: 123/DI/TU/XII/2024</p>
@@ -32,7 +44,7 @@
     <p>Ketua Departemen Teknik Industri</p>
     <p>Fakultas Teknik Universitas Diponegoro</p>
     <br><br>
-    <p>Dr. Purnawan Adi Wicaksono, S.T, M.T,</p>
-    <p>NIP. 197710032000121001</p>
+    <p>Dr. Singgih Saptadi, S.T., M.T.</p>
+    <p>NIP. 197403162001121001</p>
 </body>
 </html>
